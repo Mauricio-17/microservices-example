@@ -19,12 +19,12 @@ spring:
         - id: usuario-service
           uri: lb://usuario-service
           predicates:
-            - Path=/usuario/**
+            - Path=/**/usuario/**
         - id: car-service
           uri: lb://car-service
           predicates:
-            - Path=/car/**
+            - Path=/**/car/**
         - id: motorcycle-service
           uri: lb://motorcycle-service
           predicates:
-            - Path=/motorcycle/**
+            - Path=/**/motorcycle/**
