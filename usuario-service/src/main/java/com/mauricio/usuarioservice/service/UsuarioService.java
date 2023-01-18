@@ -42,12 +42,14 @@ public class UsuarioService {
 
 
     public List<Car> getCars(int usuarioId){
-        List<Car> cars = restTemplate.getForObject(String.format("http://localhost:8002"
-                                                                 + "/api/car/usuario/%d", usuarioId), List.class);
+        List<Car> cars = restTemplate.getForObject(String.format("http://car-service/api"
+                                                                 + "/car/usuario/%d", usuarioId), List.class);
         return cars;
     }
     public List<Motorcycle> getMotorcycles(int usuarioId){
-        List<Motorcycle> motorcycles = restTemplate.getForObject(String.format("http://localhost:8003/api/motorcycle/usuario/%d", usuarioId), List.class);
+        List<Motorcycle> motorcycles = restTemplate.getForObject(String.format("http"
+                                                                               +
+                                                                               "://motorcycle-service/api/motorcycle/usuario/%d", usuarioId), List.class);
         return motorcycles;
     }
     public Car saveCar(int usuarioId, Car car){
