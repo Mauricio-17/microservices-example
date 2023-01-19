@@ -28,3 +28,7 @@ spring:
           uri: lb://motorcycle-service
           predicates:
             - Path=/api/motorcycle/**
+        - id: gasoline-service
+          uri: lb://gasoline-service
+          predicates:
+            - Path=/api/gasoline/**

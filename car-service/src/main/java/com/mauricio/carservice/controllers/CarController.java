@@ -37,8 +37,8 @@ class CarController {
         return ResponseEntity.ok(car);
     }
     @PostMapping
-    public ResponseEntity<Car> saveCar(@RequestBody Car usuario){
-        Car newCar = carService.saveCar(usuario);
+    public ResponseEntity<Car> saveCar(@RequestBody Car car){
+        Car newCar = carService.saveCar(car);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
                                                   .buildAndExpand(newCar.getId()).toUri();
         return ResponseEntity.created(location).body(newCar);

@@ -2,6 +2,7 @@ package com.mauricio.usuarioservice.controllers;
 
 import com.mauricio.usuarioservice.entities.Usuario;
 import com.mauricio.usuarioservice.models.Car;
+import com.mauricio.usuarioservice.models.Gasoline;
 import com.mauricio.usuarioservice.models.Motorcycle;
 import com.mauricio.usuarioservice.service.UsuarioService;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
@@ -59,7 +60,6 @@ class UsuarioController {
         List<Car> cars = usuarioService.getCars(usuarioId);
         return ResponseEntity.ok(cars);
     }
-
     @CircuitBreaker(name = "motorcyclesCB", fallbackMethod = "fallBackGetMotorcycles")
     @GetMapping(value = "/motorcycle/{usuarioId}")
     public ResponseEntity<List<Motorcycle>> motorcycleList(@PathVariable(value = "usuarioId") int usuarioId){
@@ -70,6 +70,17 @@ class UsuarioController {
         List<Motorcycle> motorcycles = usuarioService.getMotorcycles(usuarioId);
         return ResponseEntity.ok(motorcycles);
     }
+    @CircuitBreaker(name = "gasolineCB", fallbackMethod = "fallBackGetGasoline")
+    @GetMapping(value = "/gasoline/{usuarioId}")
+    public ResponseEntity<List<Gasoline>> gasolineList(@PathVariable(value =
+            "usuarioId") int usuarioId){
+        Usuario usuario = usuarioService.getUsuarioById(usuarioId);
+        if (usuario == null){
+            return ResponseEntity.notFound().build();
+        }
+        List<Gasoline> gasoline = usuarioService.getGasoline(usuarioId);
+        return ResponseEntity.ok(gasoline);
+    }
 
     @CircuitBreaker(name = "carsCB", fallbackMethod = "fallBackSaveCar")
     @PostMapping("/car/{usuarioId}")
@@ -78,7 +89,6 @@ class UsuarioController {
         Car newCar = usuarioService.saveCar(usuarioId, car);
         return ResponseEntity.ok(newCar);
     }
-
     @CircuitBreaker(name = "motorcyclesCB", fallbackMethod = "fallBackSaveMotorcycle")
     @PostMapping("/motorcycle/{usuarioId}")
     public ResponseEntity<Motorcycle> saveMotorcycle(@PathVariable(value = "usuarioId") int usuarioId
@@ -86,6 +96,14 @@ class UsuarioController {
         Motorcycle newMotorcycle = usuarioService.saveMotorcycle(usuarioId, motorcycle);
         return ResponseEntity.ok(newMotorcycle);
     }
+    @CircuitBreaker(name = "gasolineCB", fallbackMethod = "fallBackSaveGasoline")
+    @PostMapping("/gasoline/{usuarioId}")
+    public ResponseEntity<Gasoline> saveGasoline(@PathVariable(value = "usuarioId") int usuarioId
+            , @RequestBody Gasoline gasoline){
+        Gasoline newGasoline = usuarioService.saveGasoline(usuarioId, gasoline);
+        return ResponseEntity.ok(newGasoline);
+    }
+
     @CircuitBreaker(name = "allCB", fallbackMethod = "fallBackGetAll")
     @GetMapping(value = "/all-data/{usuarioId}")
     public ResponseEntity<Map<String, Object>> getAllVehicleData(@PathVariable(value =
@@ -104,6 +122,7 @@ class UsuarioController {
         return new ResponseEntity(String.format("El usuario: %d no tiene dinero para "
                                                 + "los carros", id), HttpStatus.OK);
     }
+
     public ResponseEntity<List<Motorcycle>> fallBackGetMotorcycles(@PathVariable("usuarioId") int id, RuntimeException exception){
         return new ResponseEntity(String.format("El usuario: %d tiene sus motors en el "
                                                 + "taller", id), HttpStatus.OK);
@@ -114,6 +133,20 @@ class UsuarioController {
         return new ResponseEntity(String.format("El usuario: %d no tiene dinero para "
                                                 + "las motos", id), HttpStatus.OK);
     }
+
+    public ResponseEntity<List<Gasoline>> fallBackGetGasoline(@PathVariable("usuarioId") int id, RuntimeException exception){
+        return new ResponseEntity(String.format("El usuario: %d se le agotó la gasolina.",
+                                                id),
+                                  HttpStatus.OK);
+    }
+    public ResponseEntity<Gasoline> fallBackSaveGasoline(@PathVariable(
+            "usuarioId") int id, @RequestBody Gasoline gasoline,
+            RuntimeException exception){
+        return new ResponseEntity(String.format("El usuario: %d no tiene dinero para "
+                                                + "comprar gasoline :(", id),
+                                  HttpStatus.OK);
+    }
+
     public ResponseEntity<Map<String, Object>> fallBackGetAll(@PathVariable(
             "usuarioId") int id,
             RuntimeException exception){
